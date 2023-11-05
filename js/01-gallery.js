@@ -1,9 +1,6 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-const instance = basicLightbox.create(`
-    <img class="modal" src="" width="800" height="600">`)
-
 const gallery = document.querySelector('ul');
 let galleryElements = document.createElement('li');
 galleryElements = galleryItems.map((picture) => 
@@ -19,17 +16,23 @@ galleryElements = galleryItems.map((picture) =>
 </li>`).join('');
 gallery.innerHTML = galleryElements;
 
-gallery.addEventListener('click', (event) => {
-    if (event.target.tagName === 'IMG') {
-        event.preventDefault();
-        instance.show();
-        document.querySelector('.modal').src = event.target.dataset.source;  
-    }
-})
+let instance = 0;
+const onGalleryImgClick = (event) => {
+  const sourcePath = event.target.dataset.source;
+instance = basicLightbox.create(`
+    <img class="modal" src="${sourcePath}" width="800" height="600">`, {
+    onShow: () => { document.addEventListener('keydown', onEscapeKeyClick) },
+    onClose: () => {document.removeEventListener('keydown', onEscapeKeyClick) }});
+  if (event.target.tagName !== 'IMG') return;
+  event.preventDefault();
+    instance.show();
+}
 
-document.addEventListener('keydown', (event) => {
-    if (event.target.tagName === 'Escape') 
-        document.querySelector('.modal').src = event.target.dataset.source;
-        instance.close();
-});
+gallery.addEventListener('click', onGalleryImgClick);
+
+function onEscapeKeyClick(event) {
+    if (event.code !== 'Escape') return;
+    instance.close();
+};
+
 console.log(galleryItems);
