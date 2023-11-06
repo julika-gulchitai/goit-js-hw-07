@@ -18,13 +18,14 @@ gallery.innerHTML = galleryElements;
 
 let instance = 0;
 const onGalleryImgClick = (event) => {
-  const sourcePath = event.target.dataset.source;
+    const sourcePath = event.target.dataset.source;
+      if (event.target.tagName !== 'IMG') return;
 instance = basicLightbox.create(`
-    <img class="modal" src="${sourcePath}" width="800" height="600">`, {
+    <img class="modal" src="${sourcePath}" >`, {
     onShow: () => { document.addEventListener('keydown', onEscapeKeyClick) },
     onClose: () => {document.removeEventListener('keydown', onEscapeKeyClick) }});
-  if (event.target.tagName !== 'IMG') return;
-  event.preventDefault();
+
+    event.preventDefault();
     instance.show();
 }
 
